@@ -2,6 +2,7 @@ package vista;
 
 import java.util.Scanner;
 
+import excepciones.CampoVacioExcepcion;
 import servicio.EmpleadoServicio;
 
 public class Main {
@@ -11,6 +12,7 @@ public class Main {
 		Scanner sc = new Scanner(System.in);
 		sc = null;
 		int opcion = 0;
+		boolean valido = true;
 
 		do {
 		System.out.print("=== SISTEMA DE GESTIÓN DE EMPLEADOS ===");
@@ -33,7 +35,14 @@ public class Main {
 		}
 		switch (opcion) {
 		case 1:
-		es.nuevoEmpleado();
+
+			try {
+				es.nuevoEmpleado();
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+			}
+
 		break;
 		
 		case 2:
