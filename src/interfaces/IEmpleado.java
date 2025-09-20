@@ -7,4 +7,6 @@ import modelo.Empleado;
 public interface IEmpleado {
 	
 	void nuevoEmpleado () throws CampoVacioExcepcion, NumeroExcepcion, Exception;
+	
+	void listaEmpleado();
 }
