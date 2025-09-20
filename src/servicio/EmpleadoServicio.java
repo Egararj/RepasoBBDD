@@ -1,8 +1,11 @@
 package servicio;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import excepciones.CampoVacioExcepcion;
@@ -79,7 +82,7 @@ public class EmpleadoServicio implements IEmpleado{
 			throw new NumeroExcepcion();
 		}
 		sc = null;
-		if (salario <= 15000 || salario >= 100000) throw new NumeroExcepcion();
+		if (salario < 15000 || salario > 100000) throw new NumeroExcepcion();
 		else {
 		valido = false;
 		}
@@ -235,4 +238,128 @@ public class EmpleadoServicio implements IEmpleado{
 		}		
 	}
 
-}
+	public void buscarPorIdYCambiar(String buscarEmpleado) {
+		Scanner sc = new Scanner (System.in);
+		sc = null;
+		double salario = 0;
+		String confirmacion = "";
+		int id = 0;
+		EmpleadoRepositorio er = new EmpleadoRepositorio();
+		List<Empleado> empleados = new ArrayList<>();
+		empleados = er.buscarPorId(buscarEmpleado);
+		
+		for(Empleado emp : empleados) {
+			System.err.println("=========");
+			System.out.print("Id: "+emp.getId());
+			System.out.print(". Nombre: "+emp.getNombre());
+			System.out.print(". Apellidos: "+emp.getApellidos());
+			System.out.print(". Email: "+emp.getEmail());
+			System.out.print(". Salario: "+emp.getSalario());
+			System.out.print(". Fecha ingreso: "+emp.getFecha_ingreso());
+			if(emp.isActivo())
+				System.out.print(". Activo: Si");
+			else
+				System.out.print(". Activo: No");
+			System.out.print(". Departamento: "+emp.getDepartamento());
+			System.out.println(". Telefono: "+emp.getTelefono());
+			id = emp.getId();
+		}
+		System.out.println("Escriba el nuevo salario");
+		try {
+			sc = new Scanner (System.in);
+			salario = Long.parseLong(sc.nextLine());
+			sc=null;
+			if (salario < 15000 || salario > 100000) throw new Exception();
+			System.out.println("El nuevo salario sera "+salario+". Escriba 's' para confirmar o cualquier otra tecla para anular");
+			sc = new Scanner (System.in);
+			confirmacion = sc.nextLine();
+			sc=null;
+			if(confirmacion.equalsIgnoreCase("s")) {
+			er.updateSalario(salario,id);
+			confirmacion = "";
+			}
+
+		}catch (Exception e) {
+			System.out.println("Salario incorrecto");
+		}
+	}
+
+	public void buscarPorIdYEliminar(String buscarEmpleado) throws SQLException {
+		Scanner sc = new Scanner (System.in);
+		sc = null;
+		String confirmacion = "";
+		int id = 0;
+		EmpleadoRepositorio er = new EmpleadoRepositorio();
+		List<Empleado> empleados = new ArrayList<>();
+		empleados = er.buscarPorId(buscarEmpleado);
+		
+		for(Empleado emp : empleados) {
+			System.err.println("=========");
+			System.out.print("Id: "+emp.getId());
+			System.out.print(". Nombre: "+emp.getNombre());
+			System.out.print(". Apellidos: "+emp.getApellidos());
+			System.out.print(". Email: "+emp.getEmail());
+			System.out.print(". Salario: "+emp.getSalario());
+			System.out.print(". Fecha ingreso: "+emp.getFecha_ingreso());
+			if(emp.isActivo())
+				System.out.print(". Activo: Si");
+			else
+				System.out.print(". Activo: No");
+			System.out.print(". Departamento: "+emp.getDepartamento());
+			System.out.println(". Telefono: "+emp.getTelefono());
+			id = emp.getId();
+		}
+		System.out.println("Desea eliminar este empleado? Escriba 's' para confirmar o cualquier otra tecla para anular");
+		sc = new Scanner (System.in);
+		confirmacion = sc.nextLine();
+		sc=null;
+		if(confirmacion.equalsIgnoreCase("s")) {
+			System.out.println("Seguro? Escriba 's' para confirmar o cualquier otra tecla para anular");
+			sc = new Scanner (System.in);
+			confirmacion = sc.nextLine();
+			sc=null;
+			if(confirmacion.equalsIgnoreCase("s")) {
+				er.eliminarEmpleado(id);
+			}else confirmacion = "";
+		}else confirmacion = "";
+	}
+
+	public void reporte() {
+		EmpleadoRepositorio er = new EmpleadoRepositorio();
+		List<Empleado> empleados = new ArrayList<>();
+		empleados = er.obtenerEmpleados();
+		double salarioTotal = 0;
+		int contador = 0;
+		LocalDate empleadoMasAntiguoFecha = LocalDate.now();
+		Empleado empleadoAntiguo = null;
+		Map<String, Integer> cuentaEmpleadosPorDepartamento = new HashMap<>();
+		for(Empleado emp : empleados) {
+			contador ++;
+			salarioTotal += emp.getSalario();
+			cuentaEmpleadosPorDepartamento.merge(emp.getDepartamento(), 1, Integer::sum);
+			if(emp.getFecha_ingreso().isBefore(empleadoMasAntiguoFecha)) {
+				empleadoMasAntiguoFecha = emp.getFecha_ingreso();
+				empleadoAntiguo = emp;
+			}
+		}
+		System.out.println("Numerop de empleados en cada departamento: "+cuentaEmpleadosPorDepartamento);
+		double salarioMedio = (salarioTotal/contador);
+		System.out.println("Salario medio: "+salarioMedio);		
+		System.err.println("Empleado mas antiguo");
+		System.out.print("Id: "+empleadoAntiguo.getId());
+		System.out.print(". Nombre: "+empleadoAntiguo.getNombre());
+		System.out.print(". Apellidos: "+empleadoAntiguo.getApellidos());
+		System.out.print(". Email: "+empleadoAntiguo.getEmail());
+		System.out.print(". Salario: "+empleadoAntiguo.getSalario());
+		System.out.print(". Fecha ingreso: "+empleadoAntiguo.getFecha_ingreso());
+		if(empleadoAntiguo.isActivo())
+			System.out.print(". Activo: Si");
+		else
+			System.out.print(". Activo: No");
+		System.out.print(". Departamento: "+empleadoAntiguo.getDepartamento());
+		System.out.println(". Telefono: "+empleadoAntiguo.getTelefono());
+		}
+		
+	}
+
+

@@ -1,5 +1,6 @@
 package vista;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import excepciones.CampoVacioExcepcion;
@@ -7,7 +8,7 @@ import servicio.EmpleadoServicio;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		EmpleadoServicio es = new EmpleadoServicio();
 		Scanner sc = new Scanner(System.in);
 		sc = null;
@@ -95,15 +96,25 @@ public class Main {
 		break;
 		
 		case 4:
-			
+			System.out.println("Escriba el id");
+			sc = new Scanner (System.in);
+			buscarEmpleado = sc.nextLine();
+			sc = null;
+			es.buscarPorIdYCambiar(buscarEmpleado);
+					
 		break;
 		
 		case 5:
+			System.out.println("Escriba el id del empleado que quiera eliminar");
+			sc = new Scanner (System.in);
+			buscarEmpleado = sc.nextLine();
+			sc = null;
+			es.buscarPorIdYEliminar(buscarEmpleado);
 			
 		break;
 		
 		case 6:
-			
+			es.reporte();
 		break;
 		
 		case 7:

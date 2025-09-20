@@ -213,6 +213,28 @@ public class EmpleadoRepositorio {
         return empleados;
 	}
 
+	public void updateSalario(double salario, int id) throws SQLException {
+        String sql = "UPDATE empleados SET  salario = ? WHERE id = ?";
+ 
+        try(Connection conn = DbConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setDouble(1, salario);
+            ps.setInt(2, id);
+            ps.executeUpdate();           
+        }
+	}
+
+	public void eliminarEmpleado(int id) throws SQLException {
+        String sql = "UPDATE empleados SET activo = ? WHERE id = ?";
+        
+        try(Connection conn = DbConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setInt(1, 0);
+            ps.setInt(2, id);
+            ps.executeUpdate();           
+        }
+	}
+
 
 	}
 
